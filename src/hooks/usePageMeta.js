@@ -2,7 +2,17 @@
 
 import { useEffect } from 'react'
 
-export default function usePageMeta({ title, description } = {}) {
+const DOMAIN = 'https://simora-hospitality.vercel.app'
+
+function toAbsolute(urlOrPath) {
+  if (!urlOrPath) return urlOrPath
+  if (urlOrPath.startsWith('http://') || urlOrPath.startsWith('https://')) {
+    return urlOrPath
+  }
+  return `${DOMAIN}${urlOrPath.startsWith('/') ? '' : '/'}${urlOrPath}`
+}
+
+export default function usePageMeta({ title, description, image, url } = {}) {
   useEffect(() => {
     if (title) {
       document.title = title
@@ -33,5 +43,40 @@ export default function usePageMeta({ title, description } = {}) {
       }
       ogDesc.setAttribute('content', description)
     }
-  }, [title, description])
+
+    if (image) {
+      const absoluteImage = toAbsolute(image)
+      let ogImage = document.querySelector('meta[property="og:image"]')
+      if (!ogImage) {
+        ogImage = document.createElement('meta')
+        ogImage.setAttribute('property', 'og:image')
+        document.head.appendChild(ogImage)
+      }
+      ogImage.setAttribute('content', absoluteImage)
+
+      let twitterImage = document.querySelector('meta[name="twitter:image"]')
+      if (!twitterImage) {
+        twitterImage = document.createElement('meta')
+        twitterImage.setAttribute('name', 'twitter:image')
+        document.head.appendChild(twitterImage)
+      }
+      twitterImage.setAttribute('content', absoluteImage)
+    }
+
+    if (url) {
+      const absoluteUrl = toAbsolute(url)
+      let ogUrl = document.querySelector('meta[property="og:url"]')
+      if (!ogUrl) {
+        ogUrl = document.createElement('meta')
+        ogUrl.setAttribute('property', 'og:url')
+        document.head.appendChild(ogUrl)
+      }
+      ogUrl.setAttribute('content', absoluteUrl)
+
+      let canonical = document.querySelector('link[rel="canonical"]')
+      if (canonical) {
+        canonical.setAttribute('href', absoluteUrl)
+      }
+    }
+  }, [title, description, image, url])
 }
