@@ -63,20 +63,25 @@ export default function usePageMeta({ title, description, image, url } = {}) {
       twitterImage.setAttribute('content', absoluteImage)
     }
 
-    if (url) {
-      const absoluteUrl = toAbsolute(url)
-      let ogUrl = document.querySelector('meta[property="og:url"]')
-      if (!ogUrl) {
-        ogUrl = document.createElement('meta')
-        ogUrl.setAttribute('property', 'og:url')
-        document.head.appendChild(ogUrl)
-      }
-      ogUrl.setAttribute('content', absoluteUrl)
+    // Always set the canonical link and og:url from the current route
+    const rawPath = typeof window !== 'undefined' ? window.location.pathname : '/'
+    const cleanPath = rawPath === '/' ? '/' : rawPath.replace(/\/+$/, '')
+    const routeUrl = `${DOMAIN}${cleanPath.startsWith('/') ? cleanPath : '/' + cleanPath}`
 
-      let canonical = document.querySelector('link[rel="canonical"]')
-      if (canonical) {
-        canonical.setAttribute('href', absoluteUrl)
-      }
+    let canonical = document.querySelector('link[rel="canonical"]')
+    if (!canonical) {
+      canonical = document.createElement('link')
+      canonical.setAttribute('rel', 'canonical')
+      document.head.appendChild(canonical)
     }
+    canonical.setAttribute('href', routeUrl)
+
+    let ogUrl = document.querySelector('meta[property="og:url"]')
+    if (!ogUrl) {
+      ogUrl = document.createElement('meta')
+      ogUrl.setAttribute('property', 'og:url')
+      document.head.appendChild(ogUrl)
+    }
+    ogUrl.setAttribute('content', routeUrl)
   }, [title, description, image, url])
 }
