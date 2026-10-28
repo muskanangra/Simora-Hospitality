@@ -1,0 +1,15 @@
+/*
+ * KitchenHeroPattern.css — Faint background pattern for kitchen hero cards.
+ */
+
+.hero-pattern {
+  --hero-pattern-bg: #FBF6F3;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask-image: radial-gradient(ellipse at center, transparent 0, transparent 22%, #000 62%);
+  mask-image: radial-gradient(ellipse at center, transparent 0, transparent 22%, #000 62%);
+}

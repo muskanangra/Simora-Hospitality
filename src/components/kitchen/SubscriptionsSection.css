@@ -1,0 +1,209 @@
+/*
+ * SubscriptionsSection.css — Bedre’s Kitchen & Umami subscriptions styling.
+ */
+
+.kitchen-subs-section {
+  background-color: var(--cream);
+  padding-block: var(--section-pad-y);
+  scroll-margin-top: var(--nav-h);
+}
+
+.kitchen-subs-header {
+  text-align: center;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.subs-rows {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 7vw, 6rem);
+}
+
+/* Mobile: image first, then text */
+.sub-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+}
+
+.sub-row__media {
+  order: 1; /* image first on mobile */
+  width: 100%;
+}
+
+.sub-row__text {
+  order: 2; /* then text */
+  width: 100%;
+}
+
+.sub-row__name {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: normal;
+  color: var(--theme-primary);
+  margin: 0;
+}
+
+.sub-row__intro {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: rgba(42, 36, 35, 0.85);
+  margin-top: 0.5rem;
+}
+
+.sub-row__description {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: rgba(42, 36, 35, 0.80);
+  margin-top: 0.75rem;
+}
+
+.sub-row__bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-top: 1rem;
+}
+
+.sub-row__bullet-item {
+  position: relative;
+  padding-left: 1.25rem;
+  margin-bottom: 0.35rem;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(42, 36, 35, 0.80);
+}
+
+.sub-row__bullet-item:last-child {
+  margin-bottom: 0;
+}
+
+.sub-row__bullet-item::before {
+  content: '';
+  position: absolute;
+  left: 0.2rem;
+  top: 0.65em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--theme-primary);
+}
+
+.sub-row__best-for {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(42, 36, 35, 0.80);
+  margin-top: 1rem;
+}
+
+.sub-row__best-for-prefix {
+  font-weight: 600;
+  color: rgba(42, 36, 35, 0.95);
+}
+
+.sub-row__schedule {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(42, 36, 35, 0.70);
+  margin-top: 1.1rem;
+  border-top: 1px solid rgba(42, 36, 35, 0.12);
+  padding-top: 0.75rem;
+}
+
+/* Desktop (>= 768px): two columns, gap 4rem, vertically centered */
+@media (min-width: 768px) {
+  .sub-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  /* Row 1, 3: image left, text right */
+  .sub-row--image-left .sub-row__media {
+    grid-column: 1;
+    order: 1;
+  }
+
+  .sub-row--image-left .sub-row__text {
+    grid-column: 2;
+    order: 2;
+  }
+
+  /* Row 2: text left, image right */
+  .sub-row--text-left .sub-row__text {
+    grid-column: 1;
+    order: 1;
+  }
+
+  .sub-row--text-left .sub-row__media {
+    grid-column: 2;
+    order: 2;
+  }
+}
+
+/* Cream section divider between Subscriptions and Recipes on Umami */
+.sub-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 999px;
+  background-color: var(--theme-primary);
+  color: var(--cream);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  border: 1px solid var(--theme-primary);
+  cursor: pointer;
+  transition:
+    background-color 250ms ease,
+    color 250ms ease,
+    border-color 250ms ease;
+}
+
+.sub-cta-btn:hover,
+.sub-cta-btn:focus-visible {
+  background-color: var(--cream);
+  color: var(--theme-primary);
+  border-color: var(--theme-primary);
+}
+
+.sub-cta-btn:focus-visible {
+  outline: 2px solid var(--theme-primary);
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .sub-cta-btn {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+}
+
+/* Cream section divider between Subscriptions and Recipes on Umami */
+.kitchen-cream-divider {
+  width: calc(100% - 2 * var(--container-pad, 2rem));
+  max-width: 1200px;
+  height: 1px;
+  background-color: rgba(42, 36, 35, 0.10);
+  margin-inline: auto;
+  box-sizing: border-box;
+}

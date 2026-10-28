@@ -1,0 +1,64 @@
+/*
+ * KitchenHero.css — Framed card hero styling for kitchen pages.
+ */
+
+.kitchen-hero {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.kitchen-hero__card {
+  --hero-card-bg: #FBF6F3;
+  height: calc(100svh - var(--nav-h) - var(--frame-gap));
+  min-height: calc(560px - var(--nav-h) - var(--frame-gap));
+  margin-inline: var(--frame-gap);
+  margin-bottom: var(--frame-gap);
+  border-radius: var(--radius);
+  background-color: var(--hero-card-bg);
+  border: 1.5px solid color-mix(in srgb, var(--theme-primary) 40%, transparent);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Logo sits above pattern (z-index: 1) */
+.kitchen-hero__real-logo {
+  height: calc(100% - 2 * clamp(1.5rem, 4vw, 3rem));
+  width: auto;
+  max-width: calc(100% - 2 * clamp(1.5rem, 4vw, 3rem));
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+/* Centered dashed logo placeholder box */
+.kitchen-hero__logo {
+  width: min(70vw, 560px);
+  aspect-ratio: 2 / 1;
+  border-radius: 18px;
+  border: 2px dashed rgba(42, 36, 35, 0.35);
+  background-color: rgba(42, 36, 35, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+.kitchen-hero__logo-label {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 2.5vw, 1.35rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--theme-primary);
+  text-align: center;
+  user-select: none;
+}

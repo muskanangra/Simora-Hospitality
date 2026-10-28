@@ -1,0 +1,21 @@
+/*
+ * TextPlaceholder.css — Grey line bars that simulate body text volume.
+ */
+
+.text-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.text-placeholder__line {
+  display: block;
+  height: 0.875rem;        /* simulates a line of 14px body text */
+  background-color: rgba(123, 34, 48, 0.13);
+  border-radius: 3px;
+}
+
+/* On-dark modifier: cream line bars for dark cards */
+.text-placeholder.on-dark .text-placeholder__line {
+  background-color: rgba(247, 237, 232, 0.55);
+}

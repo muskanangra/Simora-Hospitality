@@ -1,0 +1,42 @@
+/* AutoVideo.css — Responsive auto-playing video element styles */
+
+.auto-video {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: block;
+  border-radius: 0;
+}
+
+.auto-video__video,
+.auto-video__poster-fallback,
+.auto-video .img-placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 0 !important;
+}
+
+/* Match reveal scale effect */
+.img-reveal-container .auto-video {
+  transform: scale(1.15);
+  transition: none;
+}
+
+.img-reveal-container.is-visible .auto-video {
+  transform: scale(1);
+  transition: transform 1400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .img-reveal-container .auto-video {
+    transform: none !important;
+    transition: none !important;
+  }
+}

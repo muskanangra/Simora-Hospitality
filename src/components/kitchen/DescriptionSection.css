@@ -1,0 +1,112 @@
+/*
+ * DescriptionSection.css — Photo collage description area for Umami & Bedre’s Kitchen.
+ */
+
+.kitchen-description {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  background: var(--theme-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: clamp(64px, 8vw, 120px);
+  min-height: clamp(560px, 56vw, 860px);
+  box-sizing: border-box;
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 800px;
+}
+
+.description-card {
+  position: relative;
+  z-index: 1;
+  background: color-mix(in srgb, var(--cream) 58%, transparent);
+  -webkit-backdrop-filter: blur(6px) saturate(1.05);
+  backdrop-filter: blur(6px) saturate(1.05);
+  color: var(--charcoal);
+  border-radius: var(--radius);
+  padding: clamp(28px, 4vw, 56px);
+  max-width: 640px;
+  width: calc(100% - 32px);
+  margin-inline: auto;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  border: none;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateY(24px);
+  will-change: opacity, transform;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .description-card {
+    background: color-mix(in srgb, var(--cream) 94%, transparent);
+  }
+}
+
+@media (max-width: 699.98px) {
+  .kitchen-description {
+    min-height: max(100vh, 760px);
+    min-height: max(100svh, 760px);
+    padding-block: clamp(120px, 34vw, 170px);
+  }
+
+  .description-card {
+    background: color-mix(in srgb, var(--cream) 72%, transparent);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+}
+
+.kitchen-description.is-visible .description-card {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.8s ease 600ms,
+    transform 0.8s ease 600ms;
+}
+
+.kitchen-page .description-card .kitchen-desc__since,
+.description-card .kitchen-desc__since,
+.kitchen-desc__since {
+  color: color-mix(in srgb, var(--charcoal) 85%, black);
+  margin-bottom: 0.85rem;
+}
+
+.kitchen-desc__heading {
+  color: var(--charcoal);
+  margin-bottom: 0;
+}
+
+.kitchen-desc__heading .accent {
+  color: var(--theme-primary);
+}
+
+.kitchen-desc__tagline {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  line-height: 1.35;
+  color: color-mix(in srgb, var(--charcoal) 85%, black);
+  margin-top: 0.75rem;
+  margin-bottom: 0;
+}
+
+.kitchen-desc__paragraph {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--charcoal) 85%, black);
+  max-width: 62ch;
+  margin-top: 1.25rem;
+  margin-bottom: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .description-card {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

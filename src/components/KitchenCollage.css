@@ -1,0 +1,115 @@
+/* KitchenCollage.css — Full-width 10-photo mosaic behind kitchen description */
+
+.collage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  gap: 0;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  pointer-events: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+}
+
+@media (max-width: 699.98px) {
+  .collage {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+  }
+}
+
+.collage__tile {
+  grid-column: var(--dc);
+  grid-row: var(--dr);
+  overflow: hidden;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  position: relative;
+}
+
+@media (max-width: 699.98px) {
+  .collage__tile {
+    grid-column: var(--mc);
+    grid-row: var(--mr);
+  }
+}
+
+.collage__tile img,
+.collage__fallback {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: scale(1.08);
+  will-change: opacity, transform;
+}
+
+.collage__tile img {
+  display: block;
+  object-fit: cover;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+}
+
+.kitchen-description.is-visible .collage__tile img,
+.kitchen-description.is-visible .collage__fallback {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 0.7s ease var(--delay),
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--delay);
+}
+
+/* Fallback tonal blocks */
+.collage__fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+}
+
+.collage__fallback--0 {
+  background-color: var(--theme-primary);
+}
+
+.collage__fallback--1 {
+  background-color: var(--theme-secondary);
+}
+
+.collage__fallback--2 {
+  background-color: color-mix(in srgb, var(--theme-primary) 50%, var(--theme-secondary) 50%);
+  background-color: color-mix(in srgb, color-mix(in srgb, var(--theme-primary), var(--theme-secondary)) 75%, var(--cream) 25%);
+}
+
+.collage__fallback-label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--cream);
+  opacity: 0.6;
+  letter-spacing: 0.02em;
+  user-select: none;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collage__tile img,
+  .collage__fallback {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

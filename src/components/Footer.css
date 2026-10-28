@@ -1,0 +1,111 @@
+/*
+ * Footer.css — Shared footer styles.
+ * Dark maroon-deep background, cream text, two-column grid on desktop.
+ */
+
+.footer {
+  background-color: var(--maroon-deep);
+  color: var(--cream);
+  padding: 4rem var(--content-px);
+  border-top: 1px solid rgba(247, 237, 232, 0.15);
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 450px;
+}
+
+.footer__inner {
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+
+.footer__heading {
+  margin-bottom: 2.5rem;
+}
+
+.footer__heading .accent {
+  color: var(--cream);
+}
+
+/* ─── CONTACT DETAILS GRID ───────────────────────────────────── */
+.footer__details {
+  display: grid;
+  grid-template-columns: 1fr; /* mobile: single column */
+  gap: 1.5rem 3rem;
+}
+
+@media (min-width: 768px) {
+  .footer__details {
+    grid-template-columns: 1fr 1fr; /* desktop: two columns */
+  }
+}
+
+.footer__detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.footer__detail-label {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;       /* ~11px */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(247, 237, 232, 0.6);
+}
+
+.footer__detail-value {
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: var(--cream);
+  word-break: break-word;
+}
+
+.footer__detail-value--phones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.footer__number-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+.footer__detail-sep {
+  white-space: pre;
+  color: var(--cream);
+  user-select: none;
+}
+
+.footer__detail-link--nowrap {
+  white-space: nowrap;
+}
+
+/* Link style: cream, no underline at rest, 1px cream underline growing from left on hover/focus (250ms) */
+.footer__detail-link {
+  color: var(--cream);
+  text-decoration: none;
+  position: relative;
+  display: inline-block;
+  word-break: break-word;
+  transition: color 250ms var(--ease-out);
+}
+
+.footer__detail-link::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--cream);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 250ms var(--ease-out);
+}
+
+.footer__detail-link:hover::after,
+.footer__detail-link:focus-visible::after {
+  transform: scaleX(1);
+}

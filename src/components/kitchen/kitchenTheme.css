@@ -1,0 +1,30 @@
+/*
+ * kitchenTheme.css — Theming variables and shared styles for Umami & Bedre’s Kitchen.
+ */
+
+.kitchen-page {
+  background-color: var(--cream);
+  min-height: 100vh;
+}
+
+.kitchen-page--umami {
+  --theme-primary: var(--soft-black);
+  --theme-secondary: var(--maroon);
+  --theme-primary-tint: rgba(42, 36, 35, 0.08);
+}
+
+.kitchen-page--bedres {
+  --theme-primary: var(--maroon);
+  --theme-secondary: var(--soft-black);
+  --theme-primary-tint: rgba(123, 34, 48, 0.08);
+}
+
+/* Cream sections: label pills and italic accent words use --theme-primary */
+.kitchen-page .section-label {
+  background: var(--theme-primary-tint);
+  color: var(--theme-primary);
+}
+
+.kitchen-page .accent {
+  color: var(--theme-primary);
+}

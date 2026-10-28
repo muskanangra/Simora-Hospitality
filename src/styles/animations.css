@@ -1,0 +1,340 @@
+/*
+ * animations.css — All animation styles for the site.
+ * Imported in main.jsx.
+ *
+ * Easings:
+ *   Reveals:       cubic-bezier(0.22, 1, 0.36, 1)
+ *   Intro lifting: cubic-bezier(0.76, 0, 0.24, 1)
+ *
+ * Only animates transform, opacity, clip-path.
+ * prefers-reduced-motion: reduce disables everything.
+ */
+
+/* ═══════════════════════════════════════════════════════════════
+   1. PAGE-LOAD INTRO (FRAMED HERO DRIVEN)
+   Phases: "loading" (0–1700ms) → "lifting" (1700–2800ms) → "done" (2800ms+)
+═══════════════════════════════════════════════════════════════ */
+
+/* Lock body scrolling until intro is done */
+html[data-intro="loading"],
+html[data-intro="loading"] body,
+html[data-intro="lifting"],
+html[data-intro="lifting"] body {
+  overflow: hidden;
+}
+
+/* --- TopNav visibility during intro --- */
+html[data-intro="loading"] .topnav {
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+  transition: none;
+}
+
+html[data-intro="lifting"] .topnav {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1) 500ms,
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1) 500ms;
+}
+
+html[data-intro="done"] .topnav {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Hero Card clip-path during intro --- */
+html[data-intro="loading"] .hero-card {
+  clip-path: inset(0 round 0) !important;
+  transition: none;
+}
+
+html[data-intro="lifting"] .hero-card {
+  clip-path: inset(var(--nav-h) var(--frame-gap) var(--frame-gap) var(--frame-gap) round var(--radius));
+  transition: clip-path 1000ms cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+html[data-intro="done"] .hero-card {
+  clip-path: inset(var(--nav-h) var(--frame-gap) var(--frame-gap) var(--frame-gap) round var(--radius));
+  transition: none;
+}
+
+/* Optional hero photo can be added later */
+
+/* --- Letter rise animation during loading --- */
+html[data-intro="loading"] .hero__name .letter {
+  animation: letterRise 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--letter-delay, 0ms) both;
+}
+
+@keyframes letterRise {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+html[data-intro="lifting"] .hero__name .letter,
+html[data-intro="done"] .hero__name .letter {
+  transform: translateY(0);
+  animation: none;
+}
+
+/* --- Hero tagline during intro --- */
+html[data-intro="loading"] .hero__tagline {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: none;
+}
+
+html[data-intro="lifting"] .hero__tagline {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1) 600ms,
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1) 600ms;
+}
+
+html[data-intro="done"] .hero__tagline {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   1b. HERO REPLAY (when scrolling back to the hero)
+═══════════════════════════════════════════════════════════════ */
+
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-replay .hero__name {
+  animation: heroFadeUp 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-replay .hero__tagline {
+  animation: heroFadeUp 900ms cubic-bezier(0.22, 1, 0.36, 1) 200ms both;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   2. SCROLL REVEALS (with instant off-screen replay resets)
+═══════════════════════════════════════════════════════════════ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  will-change: transform, opacity;
+  transition: none; /* instant reset when off-screen */
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+  transition:
+    opacity 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0ms),
+    transform 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0ms);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   3. IMAGE REVEALS (clip-path wipe + inner scale)
+═══════════════════════════════════════════════════════════════ */
+
+.img-reveal-container {
+  width: 100%;
+}
+
+.img-reveal-container .img-reveal-wrap {
+  width: 100%;
+  overflow: hidden;
+  clip-path: inset(0 0 100% 0);
+  will-change: clip-path;
+  transition: none; /* instant reset */
+}
+
+.img-reveal-container.is-visible .img-reveal-wrap {
+  clip-path: inset(0 0 0 0);
+  will-change: auto;
+  transition: clip-path 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.img-reveal-container .img-placeholder {
+  transform: scale(1.15);
+  will-change: transform;
+  transition: none; /* instant reset */
+}
+
+.img-reveal-container.is-visible .img-placeholder {
+  transform: scale(1);
+  will-change: auto;
+  transition: transform 1400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   4. DISH CARDS FAN-OUT (5 items)
+═══════════════════════════════════════════════════════════════ */
+
+/* --- Desktop fan (≥900px) --- */
+@media (min-width: 900px) {
+  /* Row 1, Card 1 */
+  .fan-card.reveal:nth-child(1) {
+    transform: translateX(calc(100% + var(--card-gap))) rotate(-6deg) scale(0.9);
+    opacity: 0;
+    transition: none;
+  }
+
+  /* Row 1, Card 2 (highest z-index) */
+  .fan-card.reveal:nth-child(2) {
+    transform: scale(0.94) translateY(20px);
+    z-index: 2;
+    opacity: 0;
+    transition: none;
+  }
+
+  /* Row 1, Card 3 */
+  .fan-card.reveal:nth-child(3) {
+    transform: translateX(calc(-100% - var(--card-gap))) rotate(6deg) scale(0.9);
+    opacity: 0;
+    transition: none;
+  }
+
+  /* Row 2, Card 4 (two-card row) */
+  .fan-card.reveal:nth-child(4) {
+    transform: translateX(calc(50% + var(--card-gap) / 2)) rotate(-6deg) scale(0.9);
+    opacity: 0;
+    transition: none;
+  }
+
+  /* Row 2, Card 5 (two-card row) */
+  .fan-card.reveal:nth-child(5) {
+    transform: translateX(calc(-50% - var(--card-gap) / 2)) rotate(6deg) scale(0.9);
+    opacity: 0;
+    transition: none;
+  }
+
+  /* Settled state when scrolled into view */
+  .fan-card.reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    transition:
+      transform 1000ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Dish names fade up 500ms after cards begin */
+  .fan-card.reveal .item-card__name {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: none;
+  }
+
+  .fan-card.reveal.is-visible .item-card__name {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 600ms cubic-bezier(0.22, 1, 0.36, 1) 500ms,
+      transform 600ms cubic-bezier(0.22, 1, 0.36, 1) 500ms;
+  }
+}
+
+/* --- Mobile staggered fade-up (<900px) --- */
+@media (max-width: 899.98px) {
+  .fan-card.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: none;
+  }
+
+  .fan-card.reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0ms),
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0ms);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   5. OUR KITCHENS CIRCLES
+═══════════════════════════════════════════════════════════════ */
+
+/* Entrance reveal */
+.kitchen-circle.reveal {
+  opacity: 0;
+  transform: scale(0.85);
+  transition: none; /* instant reset */
+}
+
+.kitchen-circle.reveal.is-visible {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0ms),
+    transform 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0ms);
+}
+
+/* Old fill-from-bottom removed: logo fills circle */
+
+/* ═══════════════════════════════════════════════════════════════
+   PREFERS-REDUCED-MOTION
+═══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  html[data-intro] .topnav,
+  html[data-intro] .hero-card,
+  html[data-intro] .hero-card__img,
+  html[data-intro] .hero__tagline,
+  html[data-intro] .hero__name .letter {
+    transform: none !important;
+    opacity: 1 !important;
+    clip-path: inset(var(--nav-h) var(--frame-gap) var(--frame-gap) var(--frame-gap) round var(--radius)) !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .hero-replay .hero__name,
+  .hero-replay .hero__tagline {
+    animation: none !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .img-reveal-wrap {
+    clip-path: none !important;
+    transition: none !important;
+  }
+
+  .img-reveal-container .img-placeholder {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .fan-card.reveal,
+  .fan-card.reveal .item-card__name {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .kitchen-circle.reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+
+}

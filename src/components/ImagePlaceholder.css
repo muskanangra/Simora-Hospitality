@@ -1,0 +1,64 @@
+/*
+ * ImagePlaceholder.css — Styles for the reusable labeled image placeholder box.
+ * The box maintains its aspect ratio via padding-top trick and displays a centered label.
+ */
+
+.img-placeholder {
+  position: relative;
+  width: 100%;
+  background-color: var(--placeholder-bg);
+  border: 1.5px solid var(--placeholder-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Padding-top creates the aspect ratio box */
+.img-placeholder__inner {
+  /* Default aspect ratio set inline via style prop */
+  padding-top: var(--aspect-ratio, 75%); /* defaults to 4:3 */
+}
+
+.img-placeholder__label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--placeholder-text);
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 1rem;
+  pointer-events: none;
+}
+
+/* On-dark modifier: cream-tinted placeholder box for dark cards */
+.img-placeholder.on-dark {
+  background-color: rgba(247, 237, 232, 0.12);
+  border: 1px solid rgba(247, 237, 232, 0.25);
+}
+
+.img-placeholder.on-dark .img-placeholder__label {
+  color: rgba(247, 237, 232, 0.70);
+}
+
+/* Real image styling — fills box, no dashed border, no tint */
+.img-placeholder.img-placeholder--has-img,
+.dish-card .img-placeholder.img-placeholder--has-img,
+.dip-card .img-placeholder.img-placeholder--has-img {
+  background-color: transparent;
+  border: none;
+}
+
+.img-placeholder__real-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  border-radius: inherit;
+}
