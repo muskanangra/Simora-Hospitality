@@ -16,6 +16,7 @@ export default function AutoVideo({
   onEnded,
   onCanPlay,
   onTimeUpdate,
+  onPlay,
   controlled = false,
 }) {
   const localVideoRef = useRef(null)
@@ -39,6 +40,12 @@ export default function AutoVideo({
   // Ref merger
   const setRef = (node) => {
     localVideoRef.current = node
+    if (node) {
+      node.muted = true
+      node.setAttribute('playsinline', 'true')
+      node.setAttribute('webkit-playsinline', 'true')
+      node.setAttribute('disablepictureinpicture', 'true')
+    }
     if (externalVideoRef) {
       if (typeof externalVideoRef === 'function') {
         externalVideoRef(node)
@@ -58,6 +65,7 @@ export default function AutoVideo({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
+          video.muted = true
           video.play().catch(() => {})
         } else {
           video.pause()
@@ -88,12 +96,15 @@ export default function AutoVideo({
           muted
           loop={loop}
           playsInline
+          webkit-playsinline="true"
+          disablePictureInPicture
           preload={preload}
           poster={poster}
           controls={prefersReduced}
           onEnded={onEnded}
           onCanPlay={onCanPlay}
           onTimeUpdate={onTimeUpdate}
+          onPlay={onPlay}
           onError={handleVideoError}
           className="auto-video__video"
         >

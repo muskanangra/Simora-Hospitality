@@ -20,6 +20,8 @@ function MediaRow({
   const isVisibleRef = useRef(false)
   const hasStartedTogetherRef = useRef(false)
 
+  const [isPlayBlocked, setIsPlayBlocked] = useState(false)
+
   const menuRef = useReveal()
 
   // Desktop check (>= 900px)
@@ -36,7 +38,7 @@ function MediaRow({
     return () => mq.removeEventListener("change", handler)
   }, [])
 
-  // Start both videos only after both have fired canplay, setting currentTime = 0 on both and calling play() together
+  // Desktop: Start both videos only after both have fired canplay, setting currentTime = 0 on both and calling play() together
   const tryStartBoth = useCallback(() => {
     if (!isVisibleRef.current) return
 
@@ -58,27 +60,78 @@ function MediaRow({
           hasStartedTogetherRef.current = true
           vLeft.currentTime = 0
           vRight.currentTime = 0
+          vLeft.muted = true
+          vRight.muted = true
           vLeft.play().catch(() => {})
           vRight.play().catch(() => {})
         } else {
-          if (vLeft.paused) vLeft.play().catch(() => {})
-          if (vRight.paused) vRight.play().catch(() => {})
+          if (vLeft.paused) {
+            vLeft.muted = true
+            vLeft.play().catch(() => {})
+          }
+          if (vRight.paused) {
+            vRight.muted = true
+            vRight.play().catch(() => {})
+          }
         }
-      }
-    } else {
-      if (!vLeft) return
-      const leftReady = leftCanPlayRef.current || vLeft.readyState >= 3
-      if (leftReady) {
-        if (!hasStartedTogetherRef.current) {
-          hasStartedTogetherRef.current = true
-          vLeft.currentTime = 0
-        }
-        if (vLeft.paused) vLeft.play().catch(() => {})
       }
     }
   }, [isDesktop])
 
-  // Synchronised start when visible, pause when not
+  // Mobile: start single video immediately on viewport entry without waiting for canplay
+  const tryStartMobile = useCallback(() => {
+    if (!isVisibleRef.current) return
+
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    if (prefersReduced) return
+
+    const vLeft = leftVideoRef.current
+    if (!vLeft) return
+
+    vLeft.muted = true
+    const playPromise = vLeft.play()
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          setIsPlayBlocked(false)
+        })
+        .catch(() => {
+          // Play was blocked (e.g. iOS Low Power Mode)
+          setIsPlayBlocked(true)
+        })
+    }
+  }, [])
+
+  // Preload buffer observer: when within ~1 screen height of viewport, set preload="auto" to buffer
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+
+    const bufferObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          const vLeft = leftVideoRef.current
+          if (vLeft && vLeft.preload !== "auto") {
+            vLeft.preload = "auto"
+          }
+          if (isDesktop) {
+            const vRight = rightVideoRef.current
+            if (vRight && vRight.preload !== "auto") {
+              vRight.preload = "auto"
+            }
+          }
+        }
+      },
+      { rootMargin: "100% 0px 100% 0px" }
+    )
+
+    bufferObserver.observe(el)
+    return () => bufferObserver.disconnect()
+  }, [isDesktop])
+
+  // Viewport playback observer: play when visible (threshold 0.25), pause when not
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
@@ -90,7 +143,11 @@ function MediaRow({
 
         if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
           isVisibleRef.current = true
-          tryStartBoth()
+          if (isDesktop) {
+            tryStartBoth()
+          } else {
+            tryStartMobile()
+          }
         } else {
           isVisibleRef.current = false
           if (vLeft) vLeft.pause()
@@ -102,15 +159,22 @@ function MediaRow({
 
     observer.observe(el)
     return () => observer.disconnect()
-  }, [tryStartBoth])
+  }, [isDesktop, tryStartBoth, tryStartMobile])
 
-  // Trigger start check if ready
+  // Trigger start check on mount / ready / resize
   useEffect(() => {
-    tryStartBoth()
-  }, [tryStartBoth])
+    if (isDesktop) {
+      tryStartBoth()
+    } else {
+      if (isVisibleRef.current) {
+        tryStartMobile()
+      }
+    }
+  }, [isDesktop, tryStartBoth, tryStartMobile])
 
-  // On the left video's timeupdate event, if the two currentTime values differ by more than 0.25s, set the right video's currentTime to the left's
+  // Desktop drift check: if two currentTime values differ by > 0.25s, resync right to left
   const handleLeftTimeUpdate = () => {
+    if (!isDesktop) return
     const vLeft = leftVideoRef.current
     const vRight = rightVideoRef.current
     if (!vLeft || !vRight) return
@@ -119,29 +183,50 @@ function MediaRow({
     }
   }
 
-  // When left video ends, reset currentTime = 0 on both and call play() on both
+  // Desktop loop: when left video ends, reset currentTime = 0 on both and call play() on both
   const handleLeftEnded = () => {
+    if (!isDesktop) return
     const vLeft = leftVideoRef.current
     const vRight = rightVideoRef.current
 
     if (vLeft) {
       vLeft.currentTime = 0
+      vLeft.muted = true
       vLeft.play().catch(() => {})
     }
     if (vRight) {
       vRight.currentTime = 0
+      vRight.muted = true
       vRight.play().catch(() => {})
     }
   }
 
   const handleLeftCanPlay = () => {
     leftCanPlayRef.current = true
-    tryStartBoth()
+    if (isDesktop) {
+      tryStartBoth()
+    }
   }
 
   const handleRightCanPlay = () => {
     rightCanPlayRef.current = true
-    tryStartBoth()
+    if (isDesktop) {
+      tryStartBoth()
+    }
+  }
+
+  const handleMobilePlay = () => {
+    setIsPlayBlocked(false)
+  }
+
+  const handleManualPlay = () => {
+    const v = leftVideoRef.current
+    if (!v) return
+    v.muted = true
+    const p = v.play()
+    if (p !== undefined) {
+      p.then(() => setIsPlayBlocked(false)).catch(() => {})
+    }
   }
 
   const videoSrc = video?.src
@@ -156,15 +241,28 @@ function MediaRow({
             <AutoVideo
               src={videoSrc}
               poster={videoPoster}
-              loop={false}
+              loop={!isDesktop}
               controlled
               videoRef={leftVideoRef}
-              onCanPlay={handleLeftCanPlay}
-              onTimeUpdate={handleLeftTimeUpdate}
-              onEnded={handleLeftEnded}
+              onCanPlay={isDesktop ? handleLeftCanPlay : undefined}
+              onTimeUpdate={isDesktop ? handleLeftTimeUpdate : undefined}
+              onEnded={isDesktop ? handleLeftEnded : undefined}
+              onPlay={handleMobilePlay}
               label={menu?.label ? `${menu.label} video` : "Menu video"}
               className="media-row__auto-video"
             />
+            {!isDesktop && isPlayBlocked && (
+              <button
+                type="button"
+                className="media-row__play-btn"
+                aria-label="Play video"
+                onClick={handleManualPlay}
+              >
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </button>
+            )}
           </div>
 
           {/* CENTER: Menu stack teaser / photo (desktop center column, mobile below video 1) */}
@@ -184,7 +282,7 @@ function MediaRow({
             )}
           </div>
 
-          {/* RIGHT: Video 2 (desktop 3rd column, hidden on < 900px) — no arrival animation */}
+          {/* RIGHT: Video 2 (desktop 3rd column, NEVER mounted on phones < 900px) */}
           {isDesktop && (
             <div className="media-row__item media-row__video media-row__video--2">
               <AutoVideo
